@@ -1,19 +1,16 @@
 const Course = require('../models/Course');
-
+const { multipleMongooseToObject } = require('../../util/mongoose');
 class SiteController {
 
     // [GET] /
-    index(req, res) {
+    index(req, res, next) {
         Course.find({})
             .then(courses => {
-                // Nếu không có lỗi, trả về danh sách khóa học dưới dạng JSON
-                res.json(courses);
+                res.render('home', {
+                    courses: multipleMongooseToObject(courses)
+                });
             })
-            .catch(err => {
-                // Nếu có lỗi, xử lý lỗi và trả về một trạng thái lỗi hoặc thông báo
-                console.error(err);
-                res.status(500).json({ error: 'Internal Server Error' });
-            });
+            .catch(next);
     }
 
     // [GET] / search
@@ -23,6 +20,6 @@ class SiteController {
     }
 }
 
-module.exports = new SiteController;
+module.exports = new SiteController();
 const newsController = require('./SiteController');
 
