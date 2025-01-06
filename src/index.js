@@ -1,5 +1,4 @@
 const express = require('express')
-const morgan = require('morgan')
 const { engine } = require('express-handlebars')
 const path = require('path')
 const app = express()
@@ -17,7 +16,27 @@ app.use(express.urlencoded({
 app.use(express.json())
 app.use(methodOverride('_method'))
 // HTTP Logger
-// app.use(morgan('combined'))
+
+// example middleware
+app.get('/middleware', function (req, res, next) {
+    if (['vethuong', 'vevip'].includes(req.query.ve)) {
+        req.face = "quadepzai!"
+        return next();
+    }
+    res.status(403).json({
+        message: 'Access Denied'
+    })
+},
+    function (req, res, next) {
+        res.json({
+            message: 'Access Success',
+            face: req.face
+        })
+    }
+
+
+)
+
 
 // Template engine
 app.engine('.hbs', engine({
